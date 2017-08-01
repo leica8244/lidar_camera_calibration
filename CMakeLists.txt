@@ -20,6 +20,7 @@ find_package(catkin
   velodyne_msgs
   velodyne_pointcloud
   pcl_ros
+  roslib
 )
 
 add_message_files(FILES marker_6dof.msg)
@@ -27,7 +28,7 @@ generate_messages(DEPENDENCIES
                   std_msgs
                   )
 
-catkin_package(CATKIN_DEPENDS std_msgs )
+catkin_package(CATKIN_DEPENDS std_msgs roslib)
 
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS})
