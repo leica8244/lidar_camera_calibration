@@ -127,6 +127,20 @@ void callback(const sensor_msgs::CameraInfoConstPtr& msg_info,
 	find_transformation(marker_info, config.num_of_markers, config.MAX_ITERS);
 	//ros::shutdown();
 }
+void callback_test(/*const sensor_msgs::CameraInfoConstPtr& msg_info,
+			  const sensor_msgs::PointCloud2ConstPtr& msg_pc,*/
+			  const lidar_camera_calibration::marker_6dof::ConstPtr& msg_rt)
+{
+
+	// ROS_INFO_STREAM("marker_6dof received at " << msg_rt->header.stamp.toSec());
+	// std::vector<float> marker_info;
+	// for(std::vector<float>::const_iterator it = msg_rt->dof.data.begin(); it != msg_rt->dof.data.end(); ++it)
+	// {
+	// 	marker_info.push_back(*it);
+	// 	std::cout << *it << " ";
+	// }
+	// std::cout << "\n";
+}
 
 
 int main(int argc, char** argv)
@@ -166,7 +180,8 @@ int main(int argc, char** argv)
 
 		typedef sync_policies::ApproximateTime<sensor_msgs::PointCloud2, lidar_camera_calibration::marker_6dof> MySyncPolicy;
 		Synchronizer<MySyncPolicy> sync(MySyncPolicy(10), cloud_sub, rt_sub);
-		sync.registerCallback(boost::bind(&callback_noCam, _1, _2));
+		//sync.registerCallback(boost::bind(&callback_noCam, _1, _2));     callback_test
+		ros::Subscriber sub = n.subscribe("lidar_camera_calibration_rt", 1, callback_test);
 
 		ros::spin();
 	}
