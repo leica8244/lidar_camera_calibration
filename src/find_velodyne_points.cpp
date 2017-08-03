@@ -27,6 +27,8 @@
 #include <pcl/common/eigen.h>
 #include <pcl/common/transforms.h>
 #include <pcl/filters/passthrough.h>
+#include <pcl/visualization/cloud_viewer.h>
+#include <pcl/visualization/pcl_visualizer.h>
 
 #include "lidar_camera_calibration/Corners.h"
 #include "lidar_camera_calibration/PreprocessUtils.h"
@@ -49,6 +51,20 @@ Mat projection_matrix;
 
 pcl::PointCloud<myPointXYZRID> point_cloud;
 
+void ViewPC(pcl::PointCloud<pcl::PointXYZ>::Ptr pc_view, string window_name = "3D Viewer")
+{
+	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer(window_name));
+	viewer->setBackgroundColor(0, 0, 0);
+	//pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZ> rgb_current(pc_view);  //µãÔÆ
+	viewer->addPointCloud(pc_view,"a");
+	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1.5, "a");
+	viewer->setCameraPosition(0,0,-1,0,0,1,0,-1,0);
+	viewer->addCoordinateSystem(1.0);
+	
+	while (!viewer->wasStopped())
+		viewer->spinOnce();
+};
+
 
 void callback_noCam(const sensor_msgs::PointCloud2ConstPtr& msg_pc,
 					const lidar_camera_calibration::marker_6dof::ConstPtr& msg_rt)
@@ -61,6 +77,14 @@ void callback_noCam(const sensor_msgs::PointCloud2ConstPtr& msg_pc,
 	point_cloud = transform(point_cloud, 0, 0, 0, M_PI/2, -M_PI / 2, 0);
 	point_cloud = intensityByRangeDiff(point_cloud, config);
 	// x := x, y := -z, z := y
+
+    pcl::PointCloud<pcl::PointXYZ>::Ptr pc_disp(new pcl::PointCloud<pcl::PointXYZ>);
+    *pc_disp = *toPointsXYZ(point_cloud);
+ //    for(auto p : *pc_disp){
+	// 	std::cout << p.x << "  " << p.y << "  " << p.z << std::endl;
+	// }
+    ViewPC(pc_disp);
+
 
 	//pcl::io::savePCDFileASCII ("/home/vishnu/PCDs/msg_point_cloud.pcd", pc);  
 
@@ -180,8 +204,8 @@ int main(int argc, char** argv)
 
 		typedef sync_policies::ApproximateTime<sensor_msgs::PointCloud2, lidar_camera_calibration::marker_6dof> MySyncPolicy;
 		Synchronizer<MySyncPolicy> sync(MySyncPolicy(10), cloud_sub, rt_sub);
-		//sync.registerCallback(boost::bind(&callback_noCam, _1, _2));     callback_test
-		ros::Subscriber sub = n.subscribe("lidar_camera_calibration_rt", 1, callback_test);
+		sync.registerCallback(boost::bind(&callback_noCam, _1, _2));     //callback_test
+		//ros::Subscriber sub = n.subscribe("lidar_camera_calibration_rt", 1, callback_test);
 
 		ros::spin();
 	}
