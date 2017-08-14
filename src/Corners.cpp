@@ -177,7 +177,7 @@ void getCorners(cv::Mat img, pcl::PointCloud<pcl::PointXYZ> scan, cv::Mat P, int
 				}
 			}
 
-			
+			std::cout << "number of point in cloud:" << cloud->size() << std::endl;
 			cv::imshow("polygon", combined_rgb_laser);
 			cv::waitKey(4);
 
@@ -193,7 +193,7 @@ void getCorners(cv::Mat img, pcl::PointCloud<pcl::PointXYZ> scan, cv::Mat P, int
 			pcl::SampleConsensusModelLine<pcl::PointXYZ>::Ptr model_l(new pcl::SampleConsensusModelLine<pcl::PointXYZ> (cloud));
 				
 			pcl::RandomSampleConsensus<pcl::PointXYZ> ransac(model_l);
-			ransac.setDistanceThreshold (0.01);
+			ransac.setDistanceThreshold (0.05);
 			ransac.computeModel();
 			ransac.getInliers(inliers);
 			ransac.getModelCoefficients(model_coefficients);

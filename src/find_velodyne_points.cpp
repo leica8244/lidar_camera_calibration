@@ -83,7 +83,7 @@ void callback_noCam(const sensor_msgs::PointCloud2ConstPtr& msg_pc,
  //    for(auto p : *pc_disp){
 	// 	std::cout << p.x << "  " << p.y << "  " << p.z << std::endl;
 	// }
-    ViewPC(pc_disp);
+   // ViewPC(pc_disp);
 
 
 	//pcl::io::savePCDFileASCII ("/home/vishnu/PCDs/msg_point_cloud.pcd", pc);  

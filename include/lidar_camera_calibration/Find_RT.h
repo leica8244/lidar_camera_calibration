@@ -85,11 +85,19 @@ Matrix4d calc_RT(MatrixXd lidar, MatrixXd camera, int MAX_ITERS)
 		rmse_avg = 0.0;
 	}
 	int num_points = lidar.cols();
-	std::cout << "Number of points: " << num_points << std::endl;
+	//std::cout << "Number of points: " << num_points << std::endl;
 	Vector3d mu_lidar, mu_camera;
 	
 	mu_lidar << 0.0, 0.0, 0.0;
 	mu_camera << 0.0, 0.0, 0.0;
+	
+	for(int i=0; i<num_points; i++)
+	{
+		std::cout << "camera points" << std::endl;
+		std::cout << camera(0,i) << " " << camera(1,i) << " " << camera(2,i) << std::endl;
+		std::cout << "lidar points" << std::endl;
+		std::cout << lidar(0,i) << " " << lidar(1,i) << " " << lidar(2,i) << std::endl;
+	}
 
 	for(int i=0; i<num_points; i++)
 	{
